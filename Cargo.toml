@@ -1,0 +1,9 @@
+[package]
+name = "weblauncher"
+version = "0.1.0"
+authors = ["Aaron Deadman <aarondeadman@ingresso.co.uk>"]
+
+[dependencies]
+env_logger = "0.3"
+iron = "*"
+handlebars-iron = "*"
