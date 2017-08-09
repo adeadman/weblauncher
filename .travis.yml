@@ -1,5 +1,5 @@
 language: rust
-sudo: false
+sudo: required
 
 rust:
   - stable
@@ -9,6 +9,9 @@ rust:
 matrix:
   allow_failures:
     - rust: nightly
+
+services:
+  - docker
 
 env:
   global:
@@ -39,3 +42,15 @@ after_success: |
   for file in target/debug/weblauncher-*[^\.d]; do mkdir -p "target/cov/$(basename $file)"; ./kcov-build/usr/local/bin/kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done &&
   bash <(curl -s https://codecov.io/bash) &&
   echo "Uploaded code coverage"
+
+before_deploy: "./build-release myapp ${TRAVIS_TAG}-${TRAVIS_OS_NAME}"
+deploy:
+  provider: releases
+  api_key:
+    secure: "..."
+  file_glob: true
+  file: "weblauncher-${TRAVIS_TAG}-${TRAVIS_OS_NAME}.*"
+  skip_cleanup: true
+  on:
+    rust: stable
+    tags: true
